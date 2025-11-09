@@ -67,7 +67,25 @@ metrics_df = pd.DataFrame({
 })
 metrics_df.to_csv("model_metrics.csv", index=False)
 
+importances = rf.feature_importances_
+feature_names = X_train.columns
+feat_imp_df = pd.DataFrame({
+    "Variable": feature_names,
+    "Importancia": importances
+})
+feat_imp_df = feat_imp_df.sort_values(by="Importancia", ascending=False)
+
+print("\n Top 5 variables más importantes según Random Forest:")
+print(feat_imp_df.head(5))
+
+# Guardar top 5 en CSV
+feat_imp_df.head(5).to_csv("top5_feature_importance.csv", index=False)
+print("Top 5 de variables relevantes guardado en top5_feature_importance.csv")
+
 dump(rf, "best_model_random_forest.joblib")
 print("\n Modelo guardado como best_model_random_forest.joblib")
 print("Métricas guardadas en model_metrics.csv")
 print("Proceso completo.")
+
+
+
