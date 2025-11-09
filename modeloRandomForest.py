@@ -67,6 +67,7 @@ metrics_df = pd.DataFrame({
 })
 metrics_df.to_csv("model_metrics.csv", index=False)
 
+#Inclur el top 5 de variables más relevantes según RF
 importances = rf.feature_importances_
 feature_names = X_train.columns
 feat_imp_df = pd.DataFrame({
