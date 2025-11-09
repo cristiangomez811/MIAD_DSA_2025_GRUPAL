@@ -1,7 +1,7 @@
 # modeloRandomForest.py
 # =============================================
 # Proyecto: Airline Passenger Satisfaction
-# Modelo: Random Forest .
+# Modelo: Random Forest 
 # =============================================
 
 import pandas as pd
