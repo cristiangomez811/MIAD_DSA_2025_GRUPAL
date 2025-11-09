@@ -41,7 +41,7 @@ test_df[num_cols] = scaler.transform(test_df[num_cols])
 X_train, y_train = train_df.drop('satisfaction', axis=1), train_df['satisfaction']
 X_test, y_test = test_df.drop('satisfaction', axis=1), test_df['satisfaction']
 
-#Entrenar el modelo
+#Entrenar el modelo 
 rf = RandomForestClassifier(n_estimators=200, random_state=42)
 rf.fit(X_train, y_train)
 
