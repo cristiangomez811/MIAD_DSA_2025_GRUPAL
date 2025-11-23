@@ -1,25 +1,36 @@
+# ===========================
+# MODELOS Y ARTEFACTOS (IGNORAR)
+# ===========================
+
+# Modelos entrenados
 best_model_random_forest.joblib
-train.csv
-test.csv
-best_model_random_forest.joblib
-model_metrics.csv
-*.csv
-best_model_random_forest.joblib
-model_metrics.csv
-*.csv
-best_model_random_forest.joblib
-model_metrics.csv
-*.csv
-best_model_random_forest.joblib
-model_metrics.csv
-*.csv
-best_model_random_forest.joblib
-model_metrics.csv
-*.csv
-best_model_random_forest.joblib
-model_metrics.csv
-*.csv
+api/model.joblib
 models/artifacts/*.joblib
 models/artifacts/*.pkl
 models/artifacts/*.onnx
-api/model.joblib
+
+# Métricas generadas por el entrenamiento
+model_metrics.csv
+
+# ===========================
+# DATOS (NO IGNORAR)
+# ===========================
+
+# Permitir todos los CSV dentro de data/
+!data/
+!data/**.csv
+
+# ===========================
+# CSV GENERALES (IGNORAR FUERA DE /data)
+# ===========================
+
+# Ignora todos los CSV fuera de data/
+*.csv
+
+# ===========================
+# EXCEPCIONES ESPECÍFICAS
+# ===========================
+
+# Asegurar que train.csv y test.csv de /data sí se suban
+!data/train.csv
+!data/test.csv
