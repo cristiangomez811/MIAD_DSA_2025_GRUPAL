@@ -1,10 +1,9 @@
-# modeloRandomForest.py
+# models/train_rf.py
 # =============================================
 # Proyecto: Airline Passenger Satisfaction
 # Modelo: Random Forest 
-# ============================================-
+# =============================================
 
-# models/train_rf.py
 import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.compose import ColumnTransformer
@@ -19,10 +18,23 @@ import os
 TRAIN_PATH = os.path.join("data", "train.csv")
 TEST_PATH  = os.path.join("data", "test.csv")
 
+# ===============================
+# 1. CARGAR Y LIMPIAR DATOS
+# ===============================
 train_df = pd.read_csv(TRAIN_PATH)
 test_df  = pd.read_csv(TEST_PATH)
 
-# target binario consistente
+# Eliminar columnas basura generadas por pandas
+drop_cols = [c for c in train_df.columns if c.lower().startswith("unnamed")]
+if "id" in train_df.columns:
+    drop_cols.append("id")
+
+train_df = train_df.drop(columns=drop_cols, errors="ignore")
+test_df  = test_df.drop(columns=drop_cols, errors="ignore")
+
+# ===============================
+# 2. TARGET BINARIO CONSISTENTE
+# ===============================
 train_df["satisfaction"] = train_df["satisfaction"].map(
     {"satisfied": 1, "neutral or dissatisfied": 0}
 )
@@ -36,7 +48,9 @@ y_train = train_df["satisfaction"]
 X_test = test_df.drop(columns=["satisfaction"])
 y_test = test_df["satisfaction"]
 
-# columnas categóricas y numéricas
+# ===============================
+# 3. PREPROCESAMIENTO Y MODELO
+# ===============================
 cat_cols = X_train.select_dtypes(exclude="number").columns.tolist()
 num_cols = X_train.select_dtypes(include="number").columns.tolist()
 
@@ -59,10 +73,15 @@ pipe = Pipeline(steps=[
     ("model", rf)
 ])
 
+# ===============================
+# 4. ENTRENAR MODELO
+# ===============================
 pipe.fit(X_train, y_train)
-
 y_pred = pipe.predict(X_test)
 
+# ===============================
+# 5. MÉTRICAS
+# ===============================
 metrics = {
     "accuracy": float(accuracy_score(y_test, y_pred)),
     "precision": float(precision_score(y_test, y_pred)),
@@ -71,11 +90,12 @@ metrics = {
 }
 print(metrics)
 
-# guardar métricas
 os.makedirs("models/artifacts", exist_ok=True)
 with open("models/artifacts/metrics.json", "w") as f:
     json.dump(metrics, f, indent=2)
 
-# guardar pipeline completo (preprocess + modelo)
+# ===============================
+# 6. GUARDAR MODELO
+# ===============================
 dump(pipe, "models/artifacts/model.joblib")
 print("Modelo final guardado en models/artifacts/model.joblib")

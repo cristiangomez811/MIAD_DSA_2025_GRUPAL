@@ -14,8 +14,19 @@ import mlflow.sklearn
 TRAIN_PATH = os.path.join("data", "train.csv")
 TEST_PATH  = os.path.join("data", "test.csv")
 
+# ===============================
+# 1. CARGAR Y LIMPIAR DATOS
+# ===============================
 train_df = pd.read_csv(TRAIN_PATH)
 test_df  = pd.read_csv(TEST_PATH)
+
+# Eliminar columnas basura generadas por pandas
+drop_cols = [c for c in train_df.columns if c.lower().startswith("unnamed")]
+if "id" in train_df.columns:
+    drop_cols.append("id")
+
+train_df = train_df.drop(columns=drop_cols, errors="ignore")
+test_df  = test_df.drop(columns=drop_cols, errors="ignore")
 
 train_df["satisfaction"] = train_df["satisfaction"].map(
     {"satisfied": 1, "neutral or dissatisfied": 0}
