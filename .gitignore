@@ -22,3 +22,4 @@ model_metrics.csv
 models/artifacts/*.joblib
 models/artifacts/*.pkl
 models/artifacts/*.onnx
+api/model.joblib
