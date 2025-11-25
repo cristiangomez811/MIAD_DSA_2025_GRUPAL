@@ -1,4 +1,4 @@
-# models/train_rf.py
+# models/train_rf_mlflow.py
 import pandas as pd
 from sklearn.compose import ColumnTransformer
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
@@ -20,7 +20,6 @@ TEST_PATH  = os.path.join("data", "test.csv")
 train_df = pd.read_csv(TRAIN_PATH)
 test_df  = pd.read_csv(TEST_PATH)
 
-# Eliminar columnas basura generadas por pandas
 drop_cols = [c for c in train_df.columns if c.lower().startswith("unnamed")]
 if "id" in train_df.columns:
     drop_cols.append("id")
@@ -50,10 +49,11 @@ preprocess = ColumnTransformer(
     ]
 )
 
-def run_experiment(n_estimators=200, max_depth=None):
+def run_experiment(n_estimators=200, max_depth=None, max_features="auto"):
     rf = RandomForestClassifier(
         n_estimators=n_estimators,
         max_depth=max_depth,
+        max_features=max_features,
         random_state=42,
         n_jobs=-1
     )
@@ -78,30 +78,42 @@ def run_experiment(n_estimators=200, max_depth=None):
 
 if __name__ == "__main__":
 
-    # 1. Definir experimento (en local crea carpeta mlruns; en Databricks queda en Experiments)
+    # ======= CAMBIO CLAVE PARA EC2 (como diabetes) =======
+    mlflow.set_tracking_uri("http://13.218.39.188:8050")
+    # ejemplo real:
+    # mlflow.set_tracking_uri("http://3.91.210.55:8050")
+
     mlflow.set_experiment("DSA-Airline-Satisfaction")
 
-    # 2. Run con tus parámetros (cada compañero cambia algo)
-    with mlflow.start_run(run_name="RF_baseline"):
-        pipe, metrics = run_experiment(n_estimators=200, max_depth=None)
+    # cada compañero cambia parámetros aquí
+    n_estimators = 200
+    max_depth = None
+    max_features = "auto"
 
-        # log parámetros
+    run_name = f"RF_{n_estimators}_depth{max_depth}_feat{max_features}"
+
+    with mlflow.start_run(run_name=run_name):
+        pipe, metrics = run_experiment(
+            n_estimators=n_estimators,
+            max_depth=max_depth,
+            max_features=max_features
+        )
+
         mlflow.log_params({
-            "model_type": "RandomForest",
-            "n_estimators": 200,
-            "max_depth": None,
+            "model_type": "RandomForestClassifier",
+            "n_estimators": n_estimators,
+            "max_depth": max_depth,
+            "max_features": max_features,
             "random_state": 42
         })
 
-        # log métricas
         mlflow.log_metrics(metrics)
 
-        # log modelo como artefacto de MLflow
         mlflow.sklearn.log_model(pipe, artifact_path="model")
 
         print(metrics)
 
-        # además guardas artefactos locales para el repo
+        # artefactos locales (NO se suben a git)
         os.makedirs("models/artifacts", exist_ok=True)
         with open("models/artifacts/metrics.json", "w") as f:
             json.dump(metrics, f, indent=2)
