@@ -58,13 +58,9 @@ Una vez descargado el proyecto, encontrará las siguientes carpetas principales:
 •	api/ : Código base del API si se desea exponer el modelo.
 
 6.	Ejecución del modelo
-Si desea entrenar el modelo manualmente, puede ejecutar cualquiera de los scripts de entrenamiento, almacenados en la carpeta models/ por ejemplo:
+Para que el modelo sea entrenado, necesita correr en su máquina o máquina virtual el archivo `python train_rf.py` que se encuentra en la carpeta models, esto generará un joblib en models/artifacts. Este archivo deberá ser copiado a la carpeta api para que tanto la API como el dashboard utilicen el modelo escogido.
 
-python train_rf.py
-
-Los modelos entrenados se almacenarán dentro de la carpeta models/artifacts.
-
-Si ya tiene un modelo entrenado, puede pasar directamente a usar el dashboard.
+Si ya tiene un modelo entrenado, puede poner el joblib directamente en la carpeta api y usar inmediatamente el dashboard.
 
 7.	Ejecución del dashboard interactivo
 El proyecto incluye un tablero construido con Dash que permite visualizar resultados y usar el modelo para predicciones. Para saber cómo manejar esta herramienta puede dirigirse al manual_usuario de la carpeta docs/, pero para correrlo, debe ejecutar el siguiente comando en su terminal:
